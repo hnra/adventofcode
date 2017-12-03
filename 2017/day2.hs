@@ -22,17 +22,10 @@ getChecksum (x:xs) = (rowChecksum x) + getChecksum xs
 
 getEvenDiv :: Int -> [Int] -> Int
 getEvenDiv _ [] = 0
-getEvenDiv x (y:ys) =
-  let
-    a = fromIntegral x
-    b = fromIntegral y
-  in
-    if mod a b == 0 then
-      div a b
-    else if mod b a == 0 then
-      div b a
-    else
-      getEvenDiv x ys
+getEvenDiv x (y:ys)
+  | mod x y == 0 = div x y
+  | mod y x == 0 = div y x
+  | otherwise = getEvenDiv x ys
 
 sumEven :: [Int] -> Int
 sumEven [] = 0
