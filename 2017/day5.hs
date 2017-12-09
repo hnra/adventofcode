@@ -1,5 +1,8 @@
 module Main where
-  type Memory = [Int]
+  import Data.Sequence (Seq, adjust', index)
+  import qualified Data.Sequence as DS
+
+  type Memory = Seq Int
   type PC = Int
 
   getInput :: IO [Int]
@@ -12,15 +15,10 @@ module Main where
     else
       return []
 
-  replaceAt :: [Int] -> Int -> Int -> [Int]
-  replaceAt ary index value =
-    fst splitAry ++ value : (tail $ snd splitAry)
-    where splitAry = (splitAt index ary)
-
   run :: Memory -> PC -> Maybe (Memory, PC)
   run mem pc =
-    if pc + (mem !! pc) < length mem then
-      Just (replaceAt mem pc (mem !! pc + 1), pc + mem !! pc)
+    if pc + (index mem pc) < DS.length mem then
+      Just (adjust' (+1) pc mem, pc + (index mem pc))
     else
       Nothing
 
@@ -33,5 +31,6 @@ module Main where
   main :: IO ()
   main = do
     input <- getInput
-    let part1 = cntSteps input 0 1
+    let seqI = DS.fromList input
+    let part1 = cntSteps seqI 0 1
     putStrLn $ "Part 1: " ++ (show part1)
