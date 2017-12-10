@@ -1,5 +1,5 @@
 module Main where
-  import Data.Sequence (Seq, adjust, index)
+  import Data.Sequence (Seq, adjust', index)
   import qualified Data.Sequence as DS
 
   type Memory = Seq Int
@@ -18,7 +18,7 @@ module Main where
   run :: Memory -> PC -> Maybe (Memory, PC)
   run mem pc =
     if pc + (index mem pc) < DS.length mem then
-      Just (adjust (+1) pc mem, pc + (index mem pc))
+      Just (adjust' (+1) pc mem, pc + (index mem pc))
     else
       Nothing
 
@@ -26,9 +26,9 @@ module Main where
   run' mem pc =
     if pc + (index mem pc) < DS.length mem && pc + (index mem pc) >= 0 then
       if index mem pc >= 3 then
-        Just (adjust (\x -> x - 1) pc mem, pc + (index mem pc))
+        Just (adjust' (\x -> x - 1) pc mem, pc + (index mem pc))
       else
-        Just (adjust (+1) pc mem, pc + (index mem pc))
+        Just (adjust' (+1) pc mem, pc + (index mem pc))
     else
       Nothing
 
