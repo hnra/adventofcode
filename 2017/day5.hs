@@ -1,5 +1,5 @@
 module Main where
-  import Data.Sequence (Seq, adjust', index)
+  import Data.Sequence (Seq, adjust, index)
   import qualified Data.Sequence as DS
 
   type Memory = Seq Int
@@ -18,7 +18,17 @@ module Main where
   run :: Memory -> PC -> Maybe (Memory, PC)
   run mem pc =
     if pc + (index mem pc) < DS.length mem then
-      Just (adjust' (+1) pc mem, pc + (index mem pc))
+      Just (adjust (+1) pc mem, pc + (index mem pc))
+    else
+      Nothing
+
+  run' :: Memory -> PC -> Maybe (Memory, PC)
+  run' mem pc =
+    if pc + (index mem pc) < DS.length mem && pc + (index mem pc) >= 0 then
+      if index mem pc >= 3 then
+        Just (adjust (\x -> x - 1) pc mem, pc + (index mem pc))
+      else
+        Just (adjust (+1) pc mem, pc + (index mem pc))
     else
       Nothing
 
@@ -28,9 +38,17 @@ module Main where
       Just (mem',pc') -> cntSteps mem' pc' (steps + 1)
       Nothing -> steps
 
+  cntSteps' :: Memory -> Int -> Int -> Int
+  cntSteps' mem pc steps =
+    case run' mem pc of
+      Just (mem',pc') -> cntSteps' mem' pc' (steps + 1)
+      Nothing -> steps
+
   main :: IO ()
   main = do
     input <- getInput
     let seqI = DS.fromList input
     let part1 = cntSteps seqI 0 1
+    let part2 = cntSteps' seqI 0 1
     putStrLn $ "Part 1: " ++ (show part1)
+    putStrLn $ "Part 2: " ++ (show part2)
