@@ -1,21 +1,15 @@
 module Main where
 
 countChar :: Char -> String -> Int
-countChar _ [] = 0
-countChar c (x:xs)
-  | c == x = 1 + countChar c xs
-  | otherwise = countChar c xs
+countChar c xs = length $ filter (==c) xs
 
 remChar :: Char -> String -> String
-remChar _ [] = []
-remChar c (x:xs)
-  | c == x = remChar c xs
-  | otherwise = x : (remChar c xs)
+remChar c xs = filter (/=c) xs
 
 dupsAndTrips :: String -> (Int, Int)
 dupsAndTrips [] = (0, 0)
 dupsAndTrips (x:xs) =
-  let cnt =  countChar x (x:xs)
+  let cnt = countChar x (x:xs)
       newStr = remChar x xs
       (dups, trips) = dupsAndTrips newStr
   in case cnt of
@@ -27,15 +21,14 @@ sumTup :: (Int, Int) -> (Int, Int) -> (Int, Int)
 sumTup (x, y) (x', y') = (x + x', y + y')
 
 isSimilar :: String -> String -> Bool
-isSimilar xs ys = if length xs == length ys then go 0 xs ys else False
+isSimilar xs ys = go 0 xs ys
     where
-      go diffs [] []
-        | diffs > 1 = False
-        | otherwise = True
+      go 1 [] [] = True
       go diffs (x:xs) (y:ys)
         | diffs > 1 = False
         | x == y = go diffs xs ys
         | otherwise = go (diffs + 1) xs ys
+      go _ _ _ = False
 
 findSimilar :: [String] -> String
 findSimilar (x:xs) =
