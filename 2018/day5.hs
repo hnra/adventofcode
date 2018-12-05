@@ -22,7 +22,7 @@ reactPolymer polymer =
 main :: IO ()
 main = do
   polymer <- readFile "day5_input"
-  let reactedPolymer = length $ reactPolymer polymer
-      bestReaction = minimum $ map (length . reactPolymer . (\c -> filter ((/=(toLower c)) . toLower) polymer)) ['a'..'z']
-  putStrLn $ "Part 1: " ++ (show reactedPolymer)
+  let reactedPolymer = reactPolymer polymer
+      bestReaction = minimum $ map (length . reactPolymer . (\c -> filter ((/=(toLower c)) . toLower) reactedPolymer)) ['a'..'z']
+  putStrLn $ "Part 1: " ++ (show $ length reactedPolymer)
   putStrLn $ "Part 2: " ++ (show bestReaction)
