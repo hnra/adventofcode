@@ -24,10 +24,6 @@ data Guard = Guard {
   _ms :: [Int]
 } deriving (Eq, Show)
 
-instance Show Record where
-  show (Record date (h,m) action) =
-    (show date) ++ " " ++ (show h) ++ ":" ++ (show m) ++ " - " ++ (show action) ++ "\n"
-
 instance Ord Record where
   compare (Record date (h,m) _) (Record date' (h', m') _)
     | date == date' && h == h' = compare m m'

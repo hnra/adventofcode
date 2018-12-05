@@ -38,4 +38,3 @@ main = do
           part2 = findFirstDup IS.empty $ scanl (+) 0 (cycle vals)
       putStrLn $ "Part 1: " ++ (show part1)
       putStrLn $ "Part 2: " ++ (show part2)
-
