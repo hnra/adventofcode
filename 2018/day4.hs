@@ -34,6 +34,9 @@ instance Ord Record where
     | date == date' = compare h h'
     | otherwise = compare date date'
 
+instance Ord Guard where
+  compare (Guard _ m) (Guard _ m') = compare (length m) (length m')
+
 parseAction :: Parser Action
 parseAction = do
   firstChar <- anyChar
@@ -80,21 +83,39 @@ getGuards records = go records HM.empty 0 0
       case _action r of
         BeginShift newGid -> go rs hm newGid 0
         FallAsleep -> go rs hm gid (snd $ _time r)
-        WakeUp -> go rs (HM.insertWith (++) gid [ptime..(snd $ _time r)] hm) gid 0
+        WakeUp -> go rs (HM.insertWith (++) gid [ptime..((snd $ _time r) - 1)] hm) gid 0
 
-findMinute :: Guard -> (Int, Int)
-findMinute (Guard _ mins) =
+findMinute :: Guard -> (Int, Int, Int)
+findMinute (Guard gid mins) =
   let minmap = foldr (\m acc -> HM.insertWith (+) m 1 acc) HM.empty mins
-  in HM.foldrWithKey (\k v (m, count) -> if v >= count then (k, v) else (m, count)) (0,0) minmap
+  in HM.foldrWithKey (\k v (m, count, _) -> if v >= count then (k, v, gid) else (m, count, gid)) (0,0,gid) minmap
+
+cmpMin :: (Int, Int, Int) -> (Int, Int, Int) -> Ordering
+cmpMin (m, c, gid) (m', c', gid') = compare c c'
 
 main :: IO ()
 main = do
   file <- B.readFile "day4_input"
   case parseOnly parseRecords file of
     Left _ -> putStrLn "Failed to parse"
-    Right recs' -> do
-      let recs = sort recs'
-          guards = getGuards recs
-          guard = foldr (\g g' -> if (length $ _ms g) > (length $ _ms g') then g else g') (Guard (-1) []) guards
-          (m, _) = findMinute guard
-      putStrLn $ "Part 1: Guard #" ++ (show $ _id guard) ++ " Minute: " ++ (show m) ++ " Result: " ++ (show $ m * (_id guard)) 
+    Right recs -> do
+      let records = sort recs
+          guards = getGuards records
+          guard = maximum guards
+          (m, _, _) = findMinute guard
+          guardMins = map findMinute guards
+          (m', _, gid) = maximumBy cmpMin guardMins
+      putStrLn $ concat [ "Part 1: Guard #"
+                        , (show $ _id guard)
+                        , " Minute: "
+                        , (show m)
+                        , " Result: "
+                        , (show $ m * (_id guard))
+                        ]
+      putStrLn $ concat [ "Part 2: Guard #"
+                        , (show $ gid)
+                        , " Minute: "
+                        , (show m')
+                        , " Result: "
+                        , (show $ m' * gid)
+                        ]
