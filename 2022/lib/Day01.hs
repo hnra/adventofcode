@@ -1,4 +1,4 @@
-module Day1 (day1) where
+module Day01 (day1) where
 
 import Utilities
 import qualified Data.Text as T

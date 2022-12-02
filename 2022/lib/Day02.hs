@@ -1,4 +1,4 @@
-module Day2 (day2) where
+module Day02 (day2) where
 
 import Utilities
 import Data.Text (Text)
