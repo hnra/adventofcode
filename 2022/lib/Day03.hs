@@ -13,8 +13,8 @@ part1input = map (\l -> splitAt (length l `div` 2) l)
 
 priority :: Char -> Int
 priority c
-    | isLower c = fromEnum c - 96
-    | otherwise = fromEnum c - 38
+    | isLower c = fromEnum c - fromEnum 'a' + 1
+    | otherwise = fromEnum c - fromEnum 'A' + 27
 
 p1 :: [Rucksack2] -> Int
 p1 = sum . map (priority . head . uncurry intersect)
