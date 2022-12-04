@@ -15,6 +15,7 @@ library Days
         Day01
         Day02
         Day03
+        Day04
     other-modules: Utilities
     hs-source-dirs:   lib
     build-depends:    base ^>=4.14.3.0, text

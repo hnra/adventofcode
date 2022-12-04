@@ -1,5 +1,5 @@
 module Utilities (
-    tread, getInput
+    tread, getInput, getLines
 ) where
 
 import Data.Text (Text)
@@ -11,3 +11,6 @@ tread = read . T.unpack
 
 getInput :: String -> IO Text
 getInput i = TIO.readFile ("inputs/day" ++ i)
+
+getLines :: String -> IO [Text]
+getLines path = T.lines <$> getInput path
