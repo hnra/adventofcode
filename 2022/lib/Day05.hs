@@ -7,42 +7,28 @@ import Data.List (transpose, foldl')
 import Data.Sequence (Seq, (><))
 import qualified Data.Sequence as S
 
--- Letters appear on chars 1, 5, 9 etc.
-parseCrateLine :: Text -> [Char]
-parseCrateLine t = [T.index t i | i <- is]
-    where
-        cnt = (T.length t + 2) `div` 4
-        is = [i * 4 + 1 | i <- [0..(cnt-1)]]
-
-parseCrateLines :: [Text] -> [[Char]]
-parseCrateLines (t:ts)
-    | T.any (=='[') t = parseCrateLine t : parseCrateLines ts
-    | otherwise = parseCrateLines ts
-parseCrateLines [] = []
-
 type Stack = Seq Char
 type Stacks = Seq Stack
-
-buildStacks :: [[Char]] -> Stacks
-buildStacks =
-    S.fromList . map (S.fromList . dropWhile (==' ')) . transpose
-
 type Move = (Int, Int, Int)
 
+parseStacks :: [Text] -> Stacks
+parseStacks = rotate . parseLines
+    where
+        parse = map (`T.index` 1) . T.chunksOf 4
+        parseLines = map parse . filter (T.any (=='['))
+        rotate = S.fromList . map (S.fromList . dropWhile (==' ')) . transpose
+
 parseMoves :: [Text] -> [Move]
-parseMoves [] = []
-parseMoves (t:ts)
-    | T.any (=='m') t =
-        (tread cnt, tread from - 1, tread to - 1) : parseMoves ts
-    | otherwise = parseMoves ts
-    where (_:cnt:_:from:_:to:_) = T.splitOn " " t
+parseMoves = map (parse . T.splitOn " ") . filter (T.isPrefixOf "move")
+    where
+        parse (_:c:_:f:_:t:_) = (tread c, tread f - 1, tread t - 1)
 
 day05input :: IO ([Move], Stacks)
 day05input = do
     input <- getLines "05"
     let
         moves = parseMoves input
-        stacks = (buildStacks . parseCrateLines) input
+        stacks = parseStacks input
     return (moves, stacks)
 
 data CrateMover = CM9000 | CM9001
