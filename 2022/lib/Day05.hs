@@ -40,8 +40,10 @@ day05input = do
         stacks = (buildStacks . parseCrates) input
     return (moves, stacks)
 
-move :: [Stack] -> Move -> [Stack]
-move stacks (c, f, t) =
+data CrateMover = CM9000 | CM9001
+
+move :: CrateMover -> [Stack] -> Move -> [Stack]
+move m stacks (c, f, t) =
     if f < t
         then l ++ (newf:take (t-f-1) ls) ++ (newt:rs)
         else r ++ (newt:take (f-t-1) rs) ++ (newf:ls)
@@ -49,16 +51,23 @@ move stacks (c, f, t) =
         (l, f':ls) = splitAt f stacks
         (r, t':rs) = splitAt t stacks
         newf = drop c f'
-        newt = reverse (take c f') ++ t'
+        newt = case m of
+            CM9000 -> reverse (take c f') ++ t'
+            CM9001 -> take c f' ++ t'
+
+top :: Stack -> String
+top [] = ""
+top (c:_) = c:""
 
 p1 :: [Stack] -> [Move] -> String
-p1 stacks = foldMap top . foldl' move stacks
-    where
-        top [] = ""
-        top (c:_) = c:""
+p1 stacks = foldMap top . foldl' (move CM9000) stacks
+
+p2 :: [Stack] -> [Move] -> String
+p2 stacks = foldMap top . foldl' (move CM9001) stacks
 
 day5 :: IO ()
 day5 = do
     (moves, stacks) <- day05input
     putStrLn "⭐ Day 5 ⭐"
     putStrLn $ "Part 1: " ++ show (p1 stacks moves)
+    putStrLn $ "Part 1: " ++ show (p2 stacks moves)
