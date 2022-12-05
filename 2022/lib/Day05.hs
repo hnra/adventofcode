@@ -6,6 +6,7 @@ import Utilities (getLines, tread)
 import Data.List (transpose, foldl')
 import Data.Sequence (Seq, (><))
 import qualified Data.Sequence as S
+import Control.Monad.Trans.State.Strict (State, get, put, execState)
 
 type Stack = Seq Char
 type Stacks = Seq Stack
@@ -26,37 +27,34 @@ parseMoves = map (parse . T.splitOn " ") . filter (T.isPrefixOf "move")
 day05input :: IO ([Move], Stacks)
 day05input = do
     input <- getLines "05"
-    let
-        moves = parseMoves input
-        stacks = parseStacks input
-    return (moves, stacks)
+    return (parseMoves input, parseStacks input)
 
 data CrateMover = CM9000 | CM9001
+type CrateState = State Stacks ()
 
-move :: CrateMover -> Stacks -> Move -> Stacks
-move m stacks (c, f, t) = ss'
-    where
+move :: CrateMover -> Move -> CrateState
+move m (c, f, t) = do
+    stacks <- get
+    let
         order = case m of
             CM9000 -> S.reverse
             CM9001 -> id
         moved = (order . S.take c) (S.index stacks f)
         ss = S.adjust' (moved ><) t stacks
         ss' = S.adjust' (S.drop c) f ss
+    put ss'
+    return ()
 
-top :: Stack -> String
-top s = case S.lookup 0 s of
-    Just c -> c:""
-    Nothing -> ""
-
-p1 :: Stacks -> [Move] -> String
-p1 stacks = foldMap top . foldl' (move CM9000) stacks
-
-p2 :: Stacks -> [Move] -> String
-p2 stacks = foldMap top . foldl' (move CM9001) stacks
+run :: CrateMover -> [Move] -> Stacks -> String
+run m moves = foldMap top . execState (traverse (move m) moves)
+    where
+        top s = case S.lookup 0 s of
+            Just c -> c:""
+            Nothing -> ""
 
 day5 :: IO ()
 day5 = do
     (moves, stacks) <- day05input
     putStrLn "⭐⭐ Day 5 ⭐⭐"
-    putStrLn $ "Part 1: " ++ show (p1 stacks moves)
-    putStrLn $ "Part 2: " ++ show (p2 stacks moves)
+    putStrLn $ "Part 1: " ++ show (run CM9000 moves stacks)
+    putStrLn $ "Part 2: " ++ show (run CM9001 moves stacks)
