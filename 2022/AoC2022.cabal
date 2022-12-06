@@ -17,6 +17,7 @@ library Days
         Day03
         Day04
         Day05
+        Day06
     other-modules: Utilities
     hs-source-dirs:   lib
     build-depends:
