@@ -4,12 +4,12 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Utilities (getLines, tread)
 import Data.List (transpose, foldl')
-import Data.Sequence (Seq, (><))
-import qualified Data.Sequence as S
-import Control.Monad.Trans.State.Strict (State, get, put, execState)
+import GHC.Arr (readSTArray, writeSTArray, freezeSTArray, thawSTArray, STArray, elems, listArray)
+import Control.Monad.ST (ST, runST)
+import Control.Monad (foldM)
 
-type Stack = Seq Char
-type Stacks = Seq Stack
+type Stack = [Char]
+type Stacks = [Stack]
 type Move = (Int, Int, Int)
 
 parseStacks :: [Text] -> Stacks
@@ -17,7 +17,7 @@ parseStacks = rotate . parseLines
     where
         parse = map (`T.index` 1) . T.chunksOf 4
         parseLines = map parse . filter (T.any (=='['))
-        rotate = S.fromList . map (S.fromList . dropWhile (==' ')) . transpose
+        rotate = map (dropWhile (==' ')) . transpose
 
 parseMoves :: [Text] -> [Move]
 parseMoves = map (parse . T.splitOn " ") . filter (T.isPrefixOf "move")
@@ -30,27 +30,26 @@ day05input = do
     return (parseMoves input, parseStacks input)
 
 data CrateMover = CM9000 | CM9001
-type CrateState = State Stacks ()
 
-move :: CrateMover -> Move -> CrateState
-move m (c, f, t) = do
-    stacks <- get
-    let
-        order = case m of
-            CM9000 -> S.reverse
+move :: CrateMover -> STArray s Int Stack -> Move -> ST s (STArray s Int Stack)
+move m a (c, f, t) = do
+    let order = case m of
+            CM9000 -> reverse
             CM9001 -> id
-        moved = (order . S.take c) (S.index stacks f)
-        ss = S.adjust' (moved ><) t stacks
-        ss' = S.adjust' (S.drop c) f ss
-    put ss'
-    return ()
+    from <- readSTArray a f
+    to <- readSTArray a t
+    writeSTArray a f (drop c from)
+    writeSTArray a t (order (take c from) ++ to)
+    pure a
 
 run :: CrateMover -> [Move] -> Stacks -> String
-run m moves = foldMap top . execState (traverse (move m) moves)
+run m moves stacks = runST $ do
+    arr <- thawSTArray $ listArray (0, length stacks - 1) stacks
+    stacks <- elems <$> (freezeSTArray =<< foldM (move m) arr moves)
+    return $ foldMap top stacks
     where
-        top s = case S.lookup 0 s of
-            Just c -> c:""
-            Nothing -> ""
+        top [] = ""
+        top (s:_) = s:""
 
 day5 :: IO ()
 day5 = do
