@@ -1,4 +1,4 @@
-module Day06 where
+module Day06 (day6) where
 
 import Utilities (getInput)
 import Data.List (nub)
