@@ -1,6 +1,6 @@
 module Day08 (day8) where
 
-import GHC.Arr (Array, array, numElements, (!), bounds)
+import GHC.Arr (Array, numElements, (!), bounds, listArray)
 
 type Forest = Array (Int, Int) Int
 type Coord = (Int, Int)
@@ -13,10 +13,7 @@ day8input = do
         forestList = (map . map) (read . (:"")) lines
         width = length (head forestList)
         height = length forestList
-        xs = concatMap (zip [0..]) forestList
-        ycoords = concatMap (replicate height) [0..]
-        xys = zipWith (\y (x, t) -> ((x, y), t)) ycoords xs
-    return $ array ((0, 0), (width - 1, height - 1)) xys
+    return $ listArray ((0, 0), (width-1, height-1)) (concat forestList)
 
 lineOfSight :: Bounds -> Coord -> ([Coord], [Coord], [Coord], [Coord])
 lineOfSight (width, height) (x, y) = (left, right, top, bottom)

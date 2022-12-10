@@ -17,8 +17,5 @@ getLines :: String -> IO [Text]
 getLines path = T.lines <$> getInput path
 
 arr2d :: Int -> Int -> a -> Array (Int, Int) a
-arr2d width height a = array ((0, 0), (width - 1, height - 1)) arr
-    where
-        row = zip [0..] (replicate width a)
-        rows = zip [0..] (replicate height row)
-        arr = concatMap (\(y, xs) -> map (\(x, c) -> ((x, y), c)) xs) rows
+arr2d width height a =
+    listArray ((0, 0), (width - 1, height - 1)) (replicate (width * height) a)

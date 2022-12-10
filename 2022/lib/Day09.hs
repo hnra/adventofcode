@@ -1,4 +1,4 @@
-module Day09 where
+module Day09 (day9) where
 
 import Utilities (getLines, tread)
 import qualified Data.Text as T

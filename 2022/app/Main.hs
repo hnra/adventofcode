@@ -12,27 +12,15 @@ import Day09 (day9)
 import Day10 (day10)
 import Data.List (intersperse)
 
-import qualified Data.Map.Strict as M
-import Data.Map.Strict (Map, (!))
 import System.Environment (getArgs)
 
-days :: Map String (IO ())
-days = M.fromList
-    [ ("1", day1)
-    , ("2", day2)
-    , ("3", day3)
-    , ("4", day4)
-    , ("5", day5)
-    , ("6", day6)
-    , ("7", day7)
-    , ("8", day8)
-    , ("9", day9)
-    , ("10", day10)
-    ]
+day0 = putStrLn "🎄 Advent of Code 2022 🎄"
+
+days = [day0, day1, day2, day3, day4, day5, day6, day7, day8, day9, day10]
 
 main :: IO ()
 main = do
     args <- getArgs
     case args of
-        [] -> sequence_ $ intersperse (putStrLn "") (M.elems days)
-        ks -> sequence_ $ intersperse (putStrLn "") (map (days!) ks)
+        [] -> sequence_ $ intersperse (putStrLn "") days
+        ks -> sequence_ $ intersperse (putStrLn "") (map ((days!!) . read) ks)

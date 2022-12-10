@@ -1,11 +1,10 @@
-module Day10 where
+module Day10 (day10) where
 
 import Utilities (getLines, tread, arr2d)
 import qualified Data.Text as T
-import GHC.Arr (readSTArray, writeSTArray, freezeSTArray, thawSTArray, STArray, elems, array, (!), bounds, Array)
+import GHC.Arr (readSTArray, writeSTArray, freezeSTArray, thawSTArray, STArray, elems, (!), bounds, Array)
 import Control.Monad.ST (ST, runST)
 import Data.List (intersperse)
-import Control.Monad.Trans.State.Strict (State, get, put)
 import Control.Monad (foldM)
 
 data Instruction = Addx Int | Noop
@@ -39,7 +38,7 @@ printArr arr = concat . intersperse "\n" $ map showRow [0..height]
 
 drawPixel :: CRT s -> ((Int, Int), Int) -> ST s (CRT s)
 drawPixel crt@(CRT arr) ((x, y), r)  = do
-    let char = if x <= r + 1 && x >= r - 1 then '#' else '.'
+    let char = if abs (x - r) < 2 then '█' else ' '
     writeSTArray arr (x, y) char
     pure crt
 
