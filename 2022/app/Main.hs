@@ -9,6 +9,7 @@ import Day06 (day6)
 import Day07 (day7)
 import Day08 (day8)
 import Day09 (day9)
+import Day10 (day10)
 import Data.List (intersperse)
 
 import qualified Data.Map.Strict as M
@@ -26,6 +27,7 @@ days = M.fromList
     , ("7", day7)
     , ("8", day8)
     , ("9", day9)
+    , ("10", day10)
     ]
 
 main :: IO ()
