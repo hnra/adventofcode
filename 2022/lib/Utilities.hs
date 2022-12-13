@@ -1,5 +1,5 @@
 module Utilities (
-    tread, getInput, getLines, arr2d, hm2d
+    tread, getInput, getLines, arr2d, hm2d, eithersToList, unreachable
 ) where
 
 import Data.Text (Text)
@@ -27,3 +27,13 @@ merge (a, list) = map (\(b, c) -> ((a, b), c)) list
 
 hm2d :: [[a]] -> HashMap (Int, Int) a
 hm2d = HM.fromList . concatMap merge . zip [0..] . map (zip [0..])
+
+eithersToList :: (a -> c) -> (b -> c) -> [Either a b] -> [c]
+eithersToList ac bc = map (abc ac bc)
+    where
+        abc :: (a -> c) -> (b -> c) -> Either a b -> c
+        abc ac _ (Left a) = ac a
+        abc _ bc (Right b) = bc b
+
+unreachable :: a
+unreachable = error "Oh boy, I'm in trouble!"
