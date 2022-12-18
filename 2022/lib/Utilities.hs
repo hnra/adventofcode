@@ -1,5 +1,5 @@
 module Utilities (
-    tread, getInput, getLines, arr2d, hm2d, eithersToList, unreachable
+    tread, getInput, getInputS, getLines, getLinesS, arr2d, hm2d, eithersToList, unreachable
 ) where
 
 import Data.Text (Text)
@@ -17,6 +17,12 @@ getInput i = TIO.readFile ("inputs/day" ++ i)
 
 getLines :: String -> IO [Text]
 getLines path = T.lines <$> getInput path
+
+getInputS :: String -> IO String
+getInputS i = readFile ("inputs/day" ++ i)
+
+getLinesS :: String -> IO [String]
+getLinesS path = lines <$> getInputS path
 
 arr2d :: Int -> Int -> a -> Array (Int, Int) a
 arr2d width height a =
