@@ -33,6 +33,7 @@ library Days
         Day16
         Day17
         Day18
+        Day19
     other-modules: Utilities
     hs-source-dirs:   lib
     build-depends:
