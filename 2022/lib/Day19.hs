@@ -59,14 +59,18 @@ day19input = do
 buildable :: Blueprint -> Cnt -> [RobotType]
 buildable bp res = filter (\r -> _mk bp r <=$ res) allTypes
 
-decisions :: State -> [Decision]
-decisions state =
+decisions :: Int -> State -> [Decision]
+decisions i state =
     if length ds == length canBuild
         then ds
         else noDecision : ds
     where
         hasGeo = _rs state HM.! Geo > 0
-        shouldBuild = if hasGeo then [Obs, Geo] else allTypes
+        shouldBuild = Geo : filter (\r ->
+            let robots = _rs state HM.! r
+                most = maximum $ map (\r' -> _mk (_bp state) r' HM.! r) allTypes
+                stock = _res state HM.! r
+            in robots * i + stock < i * most) (if hasGeo then [Obs] else allTypes)
         canBuild = filter (not . (`elem` _restrictions state)) shouldBuild
         ds = mapMaybe toDeicision canBuild
         toDeicision r
@@ -84,7 +88,7 @@ genState :: Int -> State -> [State]
 genState 0 state = [state]
 genState t state = concatMap (genState (t-1)) ds
     where
-        ds = map ($tick state) (decisions state)
+        ds = map ($tick state) (decisions t state)
 
 day19 :: IO ()
 day19 = do
