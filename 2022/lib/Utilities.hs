@@ -8,6 +8,8 @@ import qualified  Data.Text.IO as TIO
 import GHC.Arr
 import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HM
+import Data.Vector (Vector)
+import qualified Data.Vector as V
 
 tread :: Read a => Text -> a
 tread = read . T.unpack
@@ -43,3 +45,35 @@ eithersToList ac bc = map (abc ac bc)
 
 unreachable :: a
 unreachable = error "Oh boy, I'm in trouble!"
+
+floyd :: Eq a => [a] -> Maybe (Int, Int)
+floyd fs' = do
+    let
+        fs = V.fromList fs'
+        go tortoise hare = do
+            t <- fs V.!? tortoise
+            h <- fs V.!? hare
+            if h == t
+                then return (tortoise, hare)
+                else go (tortoise + 1) (hare + 2)
+    (tortoise, hare) <- go 1 2
+    
+    let
+        go' mu tortoise hare = do
+            t <- fs V.!? tortoise
+            h <- fs V.!? hare
+            if t == h
+                then return (mu, tortoise)
+                else go' (mu + 1) (tortoise + 1) (hare + 1)
+    (mu, tortoise') <- go' 0 0 hare
+
+    let
+        go'' lam hare = do
+            t <- fs V.!? tortoise'
+            h <- fs V.!? hare
+            if t == h
+                then return (lam, hare)
+                else go'' (lam + 1) (hare + 1)
+    (lam, hare') <- go'' 1 (tortoise' + 1)
+
+    return (lam, mu)
