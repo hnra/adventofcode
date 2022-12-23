@@ -1,5 +1,5 @@
 module Utilities (
-    tread, getInput, getInputS, getLines, getLinesS, arr2d, hm2d, eithersToList, unreachable
+    tread, getInput, getInputS, getLines, getLinesS, arr2d, hm2d, eithersToList, unreachable, paintGrid
 ) where
 
 import Data.Text (Text)
@@ -77,3 +77,10 @@ floyd fs' = do
     (lam, hare') <- go'' 1 (tortoise' + 1)
 
     return (lam, mu)
+
+paintGrid :: ((Int, Int), (Int, Int)) -> ((Int, Int) -> Char) -> IO ()
+paintGrid ((minX, minY), (maxX, maxY)) f = mapM_ putStrLn lines
+    where
+        ys = [minY..maxY]
+        xs = [minX..maxX]
+        lines = map (\y -> map (\x -> f (x, y)) xs) ys
