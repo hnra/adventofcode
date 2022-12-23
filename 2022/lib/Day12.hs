@@ -8,6 +8,7 @@ import qualified Data.HashSet as HS
 import Data.Foldable ( foldl' )
 import qualified Data.PQueue.Min as PQ
 import Data.PQueue.Min (MinQueue)
+import Data.List (transpose)
 
 data Node = Node Index Int deriving Eq
 instance Ord Node where
@@ -23,7 +24,7 @@ day12input :: IO (Graph, Index, Index, [Index])
 day12input = do
     input <- lines <$> readFile "inputs/day12"
     let
-        charMap = hm2d input
+        charMap = hm2d (transpose input)
         start = (head . HM.keys . HM.filter ( == 'S')) charMap
         end = (head . HM.keys . HM.filter (== 'E')) charMap
         as = (HM.keys . HM.filter (=='a')) charMap

@@ -10,6 +10,7 @@ import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HM
 import Data.Vector (Vector)
 import qualified Data.Vector as V
+import Data.List (transpose)
 
 tread :: Read a => Text -> a
 tread = read . T.unpack
@@ -34,7 +35,7 @@ merge :: (a, [(b, c)]) -> [((a, b), c)]
 merge (a, list) = map (\(b, c) -> ((a, b), c)) list
 
 hm2d :: [[a]] -> HashMap (Int, Int) a
-hm2d = HM.fromList . concatMap merge . zip [0..] . map (zip [0..])
+hm2d = HM.fromList . concatMap merge . zip [0..] . map (zip [0..]) . transpose
 
 eithersToList :: (a -> c) -> (b -> c) -> [Either a b] -> [c]
 eithersToList ac bc = map (abc ac bc)

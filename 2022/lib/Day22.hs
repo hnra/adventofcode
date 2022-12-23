@@ -21,7 +21,7 @@ day22input = do
         width = maximum (map T.length maze)
         padded = map (T.justifyLeft width ' ') maze
         route = dropWhile (not . T.any isAlpha) input
-    return (hm2d ((transpose . map T.unpack) padded), (T.unpack . head) route)
+    return (hm2d (map T.unpack padded), (T.unpack . head) route)
 
 (x, y) °+ (x', y') = (x+x', y+y')
 (x, y) °- (x', y') = (x-x', y-y')

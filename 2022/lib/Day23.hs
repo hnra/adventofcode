@@ -14,7 +14,7 @@ data Direction = North | South | West | East deriving Enum
 day23input :: IO Positions
 day23input = do
     input <- getLinesS "23"
-    let positions = HM.filter (=='#') (hm2d (transpose input))
+    let positions = HM.filter (=='#') (hm2d input)
     (return . HS.fromList . HM.keys) positions
 
 adjacent :: Direction -> Coord -> [Coord]

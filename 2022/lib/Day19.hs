@@ -93,7 +93,6 @@ genState t state = concatMap (genState (t-1)) ds
 day19 :: IO ()
 day19 = do
     input <- day19input
-    putStrLn "Day 19"
     let
         robots = one Ore
         resources = fromIs 0 0 0 0
