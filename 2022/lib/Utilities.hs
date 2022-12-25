@@ -1,11 +1,12 @@
 module Utilities (
-    tread, getInput, getInputS, getLines, getLinesS, arr2d, hm2d, eithersToList, unreachable, paintGrid
+    tread, getInput, getInputS, getLines, getLinesS, arr2d, 
+    hm2d, eithersToList, unreachable, paintGrid, bounds
 ) where
 
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified  Data.Text.IO as TIO
-import GHC.Arr
+import GHC.Arr hiding (bounds)
 import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HM
 import Data.Vector (Vector)
@@ -85,3 +86,9 @@ paintGrid ((minX, minY), (maxX, maxY)) f = mapM_ putStrLn lines
         ys = [minY..maxY]
         xs = [minX..maxX]
         lines = map (\y -> map (\x -> f (x, y)) xs) ys
+
+bounds :: HashMap (Int, Int) a -> ((Int, Int), (Int, Int))
+bounds hashmap = ((minimum xs, minimum ys), (maximum xs, maximum ys))
+    where
+        xs = map fst (HM.keys hashmap)
+        ys = map snd (HM.keys hashmap)
