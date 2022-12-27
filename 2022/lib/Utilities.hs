@@ -1,6 +1,6 @@
 module Utilities (
     tread, getInput, getInputS, getLines, getLinesS, arr2d, 
-    hm2d, eithersToList, unreachable, paintGrid, bounds
+    hm2d, eithersToList, unreachable, paintGrid, bounds, occur
 ) where
 
 import Data.Text (Text)
@@ -92,3 +92,9 @@ bounds hashmap = ((minimum xs, minimum ys), (maximum xs, maximum ys))
     where
         xs = map fst (HM.keys hashmap)
         ys = map snd (HM.keys hashmap)
+
+occur :: Eq a => a -> [a] -> Int
+occur _ [] = 0
+occur a (a':as)
+    | a == a' = 1 + occur a as
+    | otherwise = occur a as
