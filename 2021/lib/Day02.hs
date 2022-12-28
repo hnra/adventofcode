@@ -1,8 +1,9 @@
-module Main where
+module Day02 where
 
 import Text.Read
 import Data.Maybe
 import Text.Printf
+import Utilities (getInputS)
 
 data Direction = Forward | Down | Up
 data Step = Step Direction Integer
@@ -24,7 +25,7 @@ parseStep s =
 
 input :: IO [Step]
 input = do
-    steps <- readFile "inputs/day2.txt"
+    steps <- getInputS "02"
     return $ catMaybes $ fmap parseStep (lines steps)
 
 data State = State Integer Integer
@@ -51,9 +52,9 @@ p2 steps =
     case foldl p2Run (State2 0 0 0) steps of
         (State2 h d _) -> h * d
 
-main = do
-    print "Day 2"
+day2 = do
     steps <- input
-    printf "Problem 1: %i\n" (p1 steps)
-    printf "Problem 2: %i\n" (p2 steps)
+    putStrLn "⭐⭐ Day 2 ⭐⭐"
+    printf "Part 1: %i\n" (p1 steps)
+    printf "Part 2: %i\n" (p2 steps)
 

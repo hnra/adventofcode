@@ -1,0 +1,20 @@
+cabal-version:      2.4
+name:               AoCUtils
+version:            0.1.0.0
+
+author:             Henrik Andersson
+maintainer:         h@hnra.dev
+
+library
+    exposed-modules: Utilities
+    hs-source-dirs:   lib
+    build-depends:
+        base                    >= 4.14.3 && < 4.17,
+        containers              >= 0.6.5 && < 0.7,
+        unordered-containers    >= 0.2.19 && < 0.3,
+        text                    >= 1.2.4 && < 1.3,
+        vector                  >= 0.13.0 && < 0.14,
+    default-language: Haskell2010
+    default-extensions:
+        OverloadedStrings
+

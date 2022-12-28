@@ -1,0 +1,2 @@
+packages: AoC2022.cabal ../Utils/AoCUtils.cabal
+

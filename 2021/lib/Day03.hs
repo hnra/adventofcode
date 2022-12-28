@@ -1,8 +1,9 @@
-module Main where
+module Day03 where
 
 import Text.Read (readMaybe)
 import Text.Printf (printf)
 import Data.Maybe (catMaybes)
+import Utilities (getInputS)
 
 newtype Binary = Binary [Bool]
 
@@ -11,7 +12,7 @@ instance Show Binary where
 
 input :: IO [Binary]
 input = do
-    str <- readFile "inputs/day3.txt"
+    str <- getInputS "03"
     let
         ints = fmap (Binary . catMaybes) $ (fmap . fmap) readBool (lines str)
     return ints
@@ -84,11 +85,11 @@ p2 inp = do
                 Just xs -> go f (i+1) xs
                 Nothing -> Nothing
 
-main = do
-    print "Day 3"
+day3 = do
     bs <- input
-    printf "Problem 1: %i\n" (p1 bs)
+    putStrLn "⭐⭐ Day 3 ⭐⭐"
+    printf "Part 1: %i\n" (p1 bs)
     case p2 bs of
-        Just p2 -> printf "Problem 2: %i\n" p2
-        Nothing -> print "Failed problem 2"
+        Just p2 -> printf "Part 2: %i\n" p2
+        Nothing -> print "Failed part 2"
 
