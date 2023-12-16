@@ -15,6 +15,7 @@ executable AoC2022
 library Days
     exposed-modules:
         Day01
+        Day02
     hs-source-dirs:   lib
     build-depends:
         base                    >= 4.14.3 && < 4.17,
