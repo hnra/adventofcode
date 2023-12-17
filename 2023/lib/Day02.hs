@@ -9,7 +9,7 @@ import Control.Applicative ((<|>))
 data Color = Green | Blue | Red
   deriving (Eq, Show)
 
-data Draw = Draw Int Color
+data Draw = Draw { _cnt :: Int, _color :: Color } 
   deriving (Eq, Show)
 
 data Game = Game Int [[Draw]]
@@ -70,9 +70,32 @@ part1 (g@(Game gameId _):gs)
   | isAllowedGame g = gameId + part1 gs
   | otherwise = part1 gs
 
+-- Part 2
+minSet :: Game -> [Draw]
+minSet (Game _ ds) =
+  [ Draw (maxCnt reds) Red
+  , Draw (maxCnt greens) Green
+  , Draw (maxCnt blues)  Blue
+  ]
+  where
+    withColor c = ((map _cnt) . (filter ((==c) . _color)) . concat) ds
+    maxCnt [] = 0
+    maxCnt xs = maximum xs
+    reds = withColor Red
+    greens = withColor Green
+    blues = withColor Blue
+
+setPower :: [Draw] -> Int
+setPower = product . (map _cnt)
+
+part2 :: [Game] -> Int
+part2 = sum . (map (setPower . minSet))
+
 day2 :: IO ()
 day2 = do
   putStrLn "⭐⭐ Day 2 ⭐⭐"
   gs <- day2input
   let p1 = part1 gs
+  let p2 = part2 gs
   putStrLn $ "Part 1: " ++ show p1
+  putStrLn $ "Part 2: " ++ show p2
