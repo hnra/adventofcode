@@ -1,6 +1,7 @@
 module Utilities (
     tread, getInput, getInputS, getLines, getLinesS, arr2d, 
-    hm2d, eithersToList, unreachable, paintGrid, bounds, occur
+    hm2d, eithersToList, unreachable, paintGrid, bounds, occur,
+    adjacent
 ) where
 
 import Data.Text (Text)
@@ -37,6 +38,12 @@ merge (a, list) = map (\(b, c) -> ((a, b), c)) list
 
 hm2d :: [[a]] -> HashMap (Int, Int) a
 hm2d = HM.fromList . concatMap merge . zip [0..] . map (zip [0..]) . transpose
+
+adjacent :: (Int, Int) -> [(Int, Int)]
+adjacent (x, y) = [ (x-1, y-1), (x, y-1), (x+1, y-1)
+                  , (x-1, y), (x+1, y)
+                  , (x-1, y+1), (x, y+1), (x+1, y+1)
+                  ]
 
 eithersToList :: (a -> c) -> (b -> c) -> [Either a b] -> [c]
 eithersToList ac bc = map (abc ac bc)
