@@ -2,7 +2,7 @@ module Day02 where
 
 import Utilities (unreachable, getInput)
 import Data.Text (Text)
-import Data.Attoparsec.Text (Parser, decimal, space, many', sepBy', parseOnly, endOfLine)
+import Data.Attoparsec.Text (Parser, decimal, space, many', sepBy', parseOnly, endOfLine, string)
 import Control.Applicative ((<|>))
 
 -- Data types
@@ -12,8 +12,19 @@ data Color = Green | Blue | Red
 data Draw = Draw { _cnt :: Int, _color :: Color } 
   deriving (Eq, Show)
 
-data Game = Game Int [[Draw]]
+data Set = Set { _red :: Int, _green :: Int, _blue :: Int }
   deriving (Eq, Show)
+
+data Game = Game Int [Set]
+  deriving (Eq, Show)
+
+toSet :: [Draw] -> Set
+toSet = foldr go (Set 0 0 0)
+  where
+    go :: Draw -> Set -> Set
+    go (Draw cnt Red) s = s { _red = cnt }
+    go (Draw cnt Green) s = s { _green = cnt }
+    go (Draw cnt Blue) s = s { _blue = cnt }
 
 -- Parsing of input
 day2input :: IO [Game]
@@ -29,7 +40,9 @@ games = many' game
 game :: Parser Game
 game = do
   gameId <- "Game " *> decimal <* ": "
-  Game gameId <$> sets <* endOfLine
+  sets' <- sets
+  endOfLine
+  return $ Game gameId (map toSet sets')
 
 sets :: Parser [[Draw]]
 sets = draws `sepBy'` "; "
@@ -40,29 +53,27 @@ draws = draw `sepBy'` ", "
 draw :: Parser Draw
 draw = do
   cnt <- decimal <* space
-  color <- "red" <|> "green" <|> "blue"
-  return $ Draw cnt (readColor color)
+  color <- red <|> green <|> blue
+  return $ Draw cnt color
 
-readColor :: Text -> Color
-readColor "red" = Red
-readColor "blue" = Blue
-readColor "green" = Green
-readColor _ = unreachable
+red :: Parser Color
+red = string "red" >> (return Red)
+
+blue :: Parser Color
+blue = string "blue" >> (return Blue)
+
+green :: Parser Color
+green = string "green" >> (return Green)
 
 -- Part 1
-maxSet :: [Draw]
-maxSet = [Draw 12 Red, Draw 13 Green, Draw 14 Blue]
+maxSet :: Set
+maxSet = Set 12 13 14
 
-isAllowed :: Draw -> Draw -> Bool
-isAllowed (Draw cnt c') (Draw maxCnt c)
-  | c == c' = cnt <= maxCnt
-  | otherwise = True
-
-isAllowedSet :: [Draw] -> Bool
-isAllowedSet = foldr (\d -> (&&) (all (isAllowed d) maxSet)) True
+instance Ord Set where
+  (Set r g b) <= (Set r' g' b') = r <= r' && g <= g' && b <= b'
 
 isAllowedGame :: Game -> Bool
-isAllowedGame (Game _ sets) = all isAllowedSet sets
+isAllowedGame (Game _ sets) = all (<=maxSet) sets
 
 part1 :: [Game] -> Int
 part1 [] = 0
@@ -71,22 +82,14 @@ part1 (g@(Game gameId _):gs)
   | otherwise = part1 gs
 
 -- Part 2
-minSet :: Game -> [Draw]
-minSet (Game _ ds) =
-  [ Draw (maxCnt reds) Red
-  , Draw (maxCnt greens) Green
-  , Draw (maxCnt blues)  Blue
-  ]
+minSet :: Game -> Set
+minSet (Game _ sets) = Set (max _red) (max _green) (max _blue)
   where
-    withColor c = ((map _cnt) . (filter ((==c) . _color)) . concat) ds
-    maxCnt [] = 0
-    maxCnt xs = maximum xs
-    reds = withColor Red
-    greens = withColor Green
-    blues = withColor Blue
+    max :: (Set -> Int) -> Int
+    max = maximum . (flip map) sets
 
-setPower :: [Draw] -> Int
-setPower = product . (map _cnt)
+setPower :: Set -> Int
+setPower (Set r g b) = r * g * b
 
 part2 :: [Game] -> Int
 part2 = sum . (map (setPower . minSet))
