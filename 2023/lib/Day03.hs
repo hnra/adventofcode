@@ -46,9 +46,24 @@ part1 s = sum numbers
     ranges = (nub . map (numberRange s)) digits
     numbers = map (number s) ranges
 
+part2 :: Schematic -> Int
+part2 s = foldr go 0 stars
+  where
+    stars = (HM.keys . HM.filter (=='*')) s
+    go :: (Int, Int) -> Int -> Int
+    go xy acc =
+      if length ranges == 2
+        then acc + (product . map (number s)) ranges
+        else acc
+      where
+        digits = filter (isDigitInSchema s) (adjacent xy)
+        ranges = (nub . map (numberRange s)) digits
+
 day3 :: IO ()
 day3 = do
   putStrLn "⭐⭐ Day 3 ⭐⭐"
   input <- day3input
   let p1 = part1 input
+  let p2 = part2 input
   putStrLn $ "Part 1: " ++ show p1
+  putStrLn $ "Part 2: " ++ show p2
