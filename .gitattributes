@@ -1,0 +1,2 @@
+*.sh text eol=lf
+session.cookie text eol=lf
