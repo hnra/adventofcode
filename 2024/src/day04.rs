@@ -1,4 +1,18 @@
-pub fn day04(input: &str) -> (usize, usize) {
+use crate::solver::DaySolver;
+use std::fmt::Display;
+
+pub struct Day4Solver {}
+impl DaySolver for Day4Solver {
+    fn solve(
+        self: &Self,
+        input: &str,
+    ) -> (Box<(dyn Display + 'static)>, Box<(dyn Display + 'static)>) {
+        let (p1, p2) = day04(input);
+        (Box::new(p1), Box::new(p2))
+    }
+}
+
+fn day04(input: &str) -> (usize, usize) {
     let width = input.find("\n").unwrap();
     let words = input.replace("\n", "");
     let height = words.len() / width;

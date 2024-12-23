@@ -1,6 +1,19 @@
+use crate::solver::DaySolver;
 use regex::Regex;
+use std::fmt::Display;
 
-pub fn day03(puzzle_input: &str) -> (i32, i32) {
+pub struct Day3Solver {}
+impl DaySolver for Day3Solver {
+    fn solve(
+        self: &Self,
+        input: &str,
+    ) -> (Box<(dyn Display + 'static)>, Box<(dyn Display + 'static)>) {
+        let (p1, p2) = day03(input);
+        (Box::new(p1), Box::new(p2))
+    }
+}
+
+fn day03(puzzle_input: &str) -> (i32, i32) {
     let mul_re = r"mul\((\d+),(\d+)\)";
     let dont_re = r"don't\(\)";
     let do_re = r"do\(\)";

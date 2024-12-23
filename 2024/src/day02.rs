@@ -1,4 +1,18 @@
-pub fn day02(input_str: &str) -> (usize, usize) {
+use crate::solver::DaySolver;
+use std::fmt::Display;
+
+pub struct Day2Solver {}
+impl DaySolver for Day2Solver {
+    fn solve(
+        self: &Self,
+        input: &str,
+    ) -> (Box<(dyn Display + 'static)>, Box<(dyn Display + 'static)>) {
+        let (p1, p2) = day02(input);
+        (Box::new(p1), Box::new(p2))
+    }
+}
+
+fn day02(input_str: &str) -> (usize, usize) {
     let reports: Vec<Vec<i32>> = input_str
         .lines()
         .map(|l| {
