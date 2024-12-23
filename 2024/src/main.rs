@@ -44,5 +44,5 @@ fn use_solver(solver: &dyn DaySolver, day: usize) {
 
     let (p1, p2) = solver.solve(&input);
     println!("Part 1: {}", p1);
-    println!("Part 1: {}\n", p2);
+    println!("Part 2: {}\n", p2);
 }
