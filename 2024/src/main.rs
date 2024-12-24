@@ -5,12 +5,14 @@ use day01::Day1Solver;
 use day02::Day2Solver;
 use day03::Day3Solver;
 use day04::Day4Solver;
+use day05::Day5Solver;
 use solver::DaySolver;
 
 mod day01;
 mod day02;
 mod day03;
 mod day04;
+mod day05;
 mod solver;
 
 fn main() {
@@ -20,6 +22,7 @@ fn main() {
         Box::new(Day2Solver {}),
         Box::new(Day3Solver {}),
         Box::new(Day4Solver {}),
+        Box::new(Day5Solver {}),
     ];
 
     if let Some(day_str) = std::env::args().nth(1) {
